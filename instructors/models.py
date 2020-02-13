@@ -1,6 +1,7 @@
 from django.db import models
-from core.models import Person
 from django.utils.translation import ugettext_lazy as _
+from departments.models import TimeSpans
+from core.models import Person
 
 # Create your models here.
 
@@ -16,7 +17,7 @@ class InstructorExpertise(models.Model):
         on_delete=models.CASCADE)
 
     course = models.ForeignKey(
-        "departments.Department",
+        "departments.Course",
         verbose_name=_("course"),
         on_delete=models.CASCADE)
 

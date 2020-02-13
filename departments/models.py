@@ -8,7 +8,7 @@ class Term(models.Model):
     short_title = models.CharField(max_length=50, blank=True)
 
     department = models.ForeignKey(
-        "deparmtents.Department",
+        "departments.Department",
         verbose_name=_("department"),
         on_delete=models.CASCADE
     )
@@ -23,7 +23,7 @@ class Course(models.Model):
     prerequisites = models.TextField(blank=True)
 
     department = models.ForeignKey(
-        "deparmtents.Department",
+        "departments.Department",
         verbose_name=_("department"),
         on_delete=models.CASCADE
     )
@@ -32,12 +32,12 @@ class Course(models.Model):
 class SelectedCourse(models.Model):
     code = models.CharField(max_length=50, blank=True)
     term = models.ForeignKey(
-        "instructors.Term",
+        "departments.Term",
         verbose_name=_("term"),
         on_delete=models.CASCADE)
 
     cousre = models.ForeignKey(
-        "departments.Cousre",
+        "departments.Course",
         verbose_name=_("course"),
         on_delete=models.CASCADE)
 
@@ -61,7 +61,7 @@ class Room(models.Model):
     address = models.TextField()
 
     department = models.ForeignKey(
-        "deparmtents.Department",
+        "departments.Department",
         verbose_name=_("department"),
         on_delete=models.CASCADE
     )
@@ -86,7 +86,7 @@ class DaysOfWeek(models.IntegerChoices):
 
 
 class TimeSpans(models.Model):
-    day_of_week = models.IntegerField(DaysOfWeek.Choices)
+    day_of_week = models.IntegerField(choices=DaysOfWeek.choices)
     start_time = models.TimeField()
     end_time = models.TimeField()
 
@@ -96,7 +96,7 @@ class TimeSpans(models.Model):
 
 class DepartmentPeriod(TimeSpans):
     department = models.ForeignKey(
-        "deparmtents.Department",
+        "departments.Department",
         verbose_name=_("department"),
         on_delete=models.CASCADE
     )
@@ -104,7 +104,7 @@ class DepartmentPeriod(TimeSpans):
 
 class Schedule(models.Model):
     department_period = models.ManyToManyField(
-        "departments.DepartmentPerdiod",
+        "departments.DepartmentPeriod",
         verbose_name=_("department period")
     )
 
@@ -120,4 +120,4 @@ class Schedule(models.Model):
     )
 
     class Meta:
-        unique_together = ['department_period', 'selected_course', 'room']
+        unique_together = ['selected_course', 'room']
