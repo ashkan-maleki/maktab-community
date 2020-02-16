@@ -21,9 +21,17 @@ class InstructorExpertise(models.Model):
         verbose_name=_("course"),
         on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name = _("Instructor Expertise")
+        verbose_name_plural = _("Instructor Expertise")
+
 
 class InstructorWorkDay(TimeSpans):
     instructor = models.ForeignKey(
         "instructors.Instructor",
         verbose_name=_("instructor"),
         on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _("Instructor Work Day")
+        verbose_name_plural = _("Instructor Work Days")

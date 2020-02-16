@@ -46,8 +46,8 @@ class SelectedCourse(models.Model):
         verbose_name=_("instructors"))
 
     class Meta:
-        verbose_name = _("")
-        verbose_name_plural = _("s")
+        verbose_name = _("Selected Course")
+        verbose_name_plural = _("Selected Courses")
 
     def __str__(self):
         return self.code
@@ -100,6 +100,10 @@ class DepartmentPeriod(TimeSpans):
         verbose_name=_("department"),
         on_delete=models.CASCADE
     )
+
+    class Meta:
+        verbose_name = _("Department Period")
+        verbose_name_plural = _("Department Periods")
 
 
 class Schedule(models.Model):
