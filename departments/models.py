@@ -64,13 +64,16 @@ class SelectedCourse(models.Model):
 
 class Room(models.Model):
     code = models.CharField(max_length=50)
-    address = models.TextField()
+    address = models.TextField(blank=True)
 
     department = models.ForeignKey(
         "departments.Department",
         verbose_name=_("department"),
         on_delete=models.CASCADE
     )
+
+    def __str__(self):
+        return self.code
 
 
 class Department(models.Model):
