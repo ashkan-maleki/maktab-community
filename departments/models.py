@@ -28,6 +28,12 @@ class Course(models.Model):
         on_delete=models.CASCADE
     )
 
+    def __str__(self):
+        result = self.title
+        if self.code is not None:
+            result += f' ({self.code})'
+        return result
+
 
 class SelectedCourse(models.Model):
     code = models.CharField(max_length=50, blank=True)
@@ -71,6 +77,9 @@ class Department(models.Model):
     title = models.CharField(max_length=250)
     code = models.CharField(max_length=50)
     address = models.TextField()
+
+    def __str__(self):
+        return self.title
 
 
 class DaysOfWeek(models.IntegerChoices):

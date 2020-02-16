@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from departments.models import TimeSpans
+
+
+from departments.models import TimeSpans, DaysOfWeek
 from core.models import Person
 
 # Create your models here.
@@ -21,6 +23,9 @@ class InstructorExpertise(models.Model):
         verbose_name=_("course"),
         on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.instructor.name} can teach {self.course}'
+
     class Meta:
         verbose_name = _("Instructor Expertise")
         verbose_name_plural = _("Instructor Expertise")
@@ -31,6 +36,10 @@ class InstructorWorkDay(TimeSpans):
         "instructors.Instructor",
         verbose_name=_("instructor"),
         on_delete=models.CASCADE)
+
+    def __str__(self):
+        day_of_week = DaysOfWeek(self.day_of_week).label
+        return f'{self.instructor.name} can teach on {day_of_week} between {self.start_time} and {self.end_time}'
 
     class Meta:
         verbose_name = _("Instructor Work Day")
