@@ -5,13 +5,15 @@ from django.utils.translation import ugettext_lazy as _
 class Term(models.Model):
     title = models.CharField(max_length=250)
     code = models.CharField(max_length=50, blank=True)
-    short_title = models.CharField(max_length=50, blank=True)
 
     department = models.ForeignKey(
         "departments.Department",
         verbose_name=_("department"),
         on_delete=models.CASCADE
     )
+
+    def __str__(self):
+        return self.title
 
 
 class Course(models.Model):
@@ -36,13 +38,12 @@ class Course(models.Model):
 
 
 class SelectedCourse(models.Model):
-    code = models.CharField(max_length=50, blank=True)
     term = models.ForeignKey(
         "departments.Term",
         verbose_name=_("term"),
         on_delete=models.CASCADE)
 
-    cousre = models.ForeignKey(
+    course = models.ForeignKey(
         "departments.Course",
         verbose_name=_("course"),
         on_delete=models.CASCADE)
@@ -56,10 +57,14 @@ class SelectedCourse(models.Model):
         verbose_name_plural = _("Selected Courses")
 
     def __str__(self):
-        return self.code
+        instructor_str = ''
+        for s in self.instructors.all():
+            instructor_str += s.name + ', '
+        instructor_str = instructor_str[:-2]
+        return f'{self.course} is instructed by {instructor_str}'
 
-    def get_absolute_url(self):
-        return reverse("_detail", kwargs={"pk": self.pk})
+    # def get_absolute_url(self):
+    #     return reverse("_detail", kwargs={"pk": self.pk})
 
 
 class Room(models.Model):
@@ -101,6 +106,10 @@ class TimeSpans(models.Model):
     day_of_week = models.IntegerField(choices=DaysOfWeek.choices)
     start_time = models.TimeField()
     end_time = models.TimeField()
+    term = models.ForeignKey(
+        "departments.Term",
+        verbose_name=_("term"),
+        on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
@@ -117,15 +126,19 @@ class DepartmentPeriod(TimeSpans):
         verbose_name = _("Department Period")
         verbose_name_plural = _("Department Periods")
 
+    def __str__(self):
+        day_of_week = DaysOfWeek(self.day_of_week).label
+        return f'{self.department.title} ({self.term}) - {day_of_week}: {self.start_time} - {self.end_time}'
+
 
 class Schedule(models.Model):
-    department_period = models.ManyToManyField(
+    department_periods = models.ManyToManyField(
         "departments.DepartmentPeriod",
-        verbose_name=_("department period")
+        verbose_name=_("department periods")
     )
 
     selected_course = models.ForeignKey(
-        "departments.Course",
+        "departments.SelectedCourse",
         verbose_name=_("course"),
         on_delete=models.CASCADE)
 

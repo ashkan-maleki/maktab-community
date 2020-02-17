@@ -4,20 +4,17 @@ from django.contrib import admin
 from departments import models
 
 
-class RoomForm(forms.ModelForm):
+class TermForm(forms.ModelForm):
     class Meta:
         fields = '__all__'
-        model = models.Room
+        model = models.Term
 
 
-class RoomAdmin(admin.ModelAdmin):
-    form = RoomForm
-    # fields = (('title', 'code'), ('daily_length', 'no_of_days'),
-    #           'department', 'description', 'prerequisites')
+class TermAdmin(admin.ModelAdmin):
+    form = TermForm
+    fields = (('title', 'department'), 'code')
 
-    # list_display = ('id', 'title', 'code', 'daily_length', 'no_of_days',
-    #                 'department')
-    # list_editable = ('title', 'code', 'daily_length', 'no_of_days',
-    #                  'department')
+    list_display = ('id', 'title', 'code', 'department')
+    list_editable = ('title', 'code', 'department')
 
-    # search_fields = ('title', 'code', 'department__title')
+    search_fields = ('title', 'code', 'department__title')
