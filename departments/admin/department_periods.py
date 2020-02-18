@@ -13,11 +13,12 @@ class DepartmentPeriodForm(forms.ModelForm):
 
 class DepartmentPeriodAdmin(admin.ModelAdmin):
     form = DepartmentPeriodForm
-    fields = (('department', 'day_of_week'), ('start_time', 'end_time'))
+    fields = (('department', 'term'),
+              ('day_of_week', 'start_time', 'end_time'))
     list_display = ('id', 'department', 'day_of_week',
-                    'start_time', 'end_time')
+                    'start_time', 'end_time', 'term')
     # list_display_links = ('id',)
     list_editable = ('department', 'day_of_week',
-                     'start_time', 'end_time')
+                     'start_time', 'end_time', 'term')
     search_fields = ['department__title', ]
-    list_filter = ('department', 'day_of_week')
+    list_filter = ('department', 'day_of_week', 'term')
