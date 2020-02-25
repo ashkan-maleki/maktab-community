@@ -13,7 +13,11 @@ class StudentForm(forms.ModelForm):
 
 class StudentAdmin(admin.ModelAdmin):
     form = StudentForm
-    fields = (('first_name', 'last_name'), 'code', 'description')
+    fields = (
+        ('first_name', 'last_name'), 'code',
+        'description',
+        'courses'
+    )
     list_display = ('id', 'first_name', 'last_name', 'code')
     list_display_links = ('id',)
     list_editable = ('first_name', 'last_name', 'code')
