@@ -5,6 +5,8 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register('students', views.StudentViewSet, 'student')
+router.register('instructors', views.InstructorViewSet, 'instructor')
+
 
 app_name = 'api'
 urlpatterns = [

@@ -1,11 +1,9 @@
-from rest_framework import serializers
-
+from base import serializers
 from instructors import models
 
 
-class StudentSerializer(serializers.ModelSerializer):
+class InstructorSerializer(serializers.ModelSerializer):
     class Meta:
+        url_name = 'api:instructor'
         model = models.Instructor
-        fields = ['id', 'first_name', 'last_name',
-                  'code', 'description', 'courses']
-        read_only_fields = ['id']
+        fields = ['first_name', 'last_name', 'code', 'description']
