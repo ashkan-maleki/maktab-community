@@ -1,19 +1,23 @@
 from django import forms
 from django.contrib import admin
 
-from instructors import models
+from .. import models
 
 
-class InstructorForm(forms.ModelForm):
+class StudentForm(forms.ModelForm):
 
     class Meta:
-        model = models.Instructor
+        model = models.Student
         fields = '__all__'
 
 
-class InstructorAdmin(admin.ModelAdmin):
-    form = InstructorForm
-    fields = (('first_name', 'last_name'), 'code', 'description')
+class StudentAdmin(admin.ModelAdmin):
+    form = StudentForm
+    fields = (
+        ('first_name', 'last_name'), 'code',
+        'description',
+        'courses'
+    )
     list_display = ('id', 'first_name', 'last_name', 'code')
     list_display_links = ('id',)
     list_editable = ('first_name', 'last_name', 'code')

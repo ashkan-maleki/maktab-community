@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 
-from instructors import models
+from .. import models
 
 
 class InstructorExpertiseForm(forms.ModelForm):

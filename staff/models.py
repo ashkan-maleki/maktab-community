@@ -1,11 +1,34 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-
 from departments.models import TimeSpans, DaysOfWeek
-from core.models import Person
+from base.models import FourFieldModel
 
-# Create your models here.
+
+class Person(FourFieldModel):
+    first_name = models.CharField(max_length=250)
+    last_name = models.CharField(max_length=250)
+    code = models.CharField(max_length=50, blank=True)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def name(self):
+        return f'{self.first_name} {self.last_name}'
+
+    class Meta:
+        abstract = True
+
+
+class Student(Person):
+    courses = models.ManyToManyField(
+        "departments.SelectedCourse",
+        verbose_name=_("courses"),
+        related_name='students',
+        blank=True
+    )
 
 
 class Instructor(Person):
@@ -14,7 +37,7 @@ class Instructor(Person):
 
 class InstructorExpertise(models.Model):
     instructor = models.ForeignKey(
-        "instructors.Instructor",
+        "staff.Instructor",
         verbose_name=_("instructor"),
         on_delete=models.CASCADE)
 
@@ -33,7 +56,7 @@ class InstructorExpertise(models.Model):
 
 class InstructorWorkDay(TimeSpans):
     instructor = models.ForeignKey(
-        "instructors.Instructor",
+        "staff.Instructor",
         verbose_name=_("instructor"),
         on_delete=models.CASCADE)
 

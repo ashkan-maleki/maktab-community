@@ -49,7 +49,7 @@ class SelectedCourse(models.Model):
         on_delete=models.CASCADE)
 
     instructors = models.ManyToManyField(
-        "instructors.Instructor",
+        "staff.Instructor",
         verbose_name=_("instructors"))
 
     class Meta:

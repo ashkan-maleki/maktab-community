@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 
-from instructors.models import Instructor
+from ..models import Instructor
 from ..serializers import InstructorSerializer
 
 

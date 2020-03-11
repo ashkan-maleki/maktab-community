@@ -1,5 +1,5 @@
 from base import serializers
-from students import models
+from .. import models
 
 
 class StudentSerializer(serializers.ModelSerializer):
