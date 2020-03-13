@@ -1,1 +1,1 @@
-from .base import Base, ThreeFieldModel, FourFieldModel
+from .base import Base, ThreeFieldModel, FourFieldModel, CodeGenerator

@@ -2,13 +2,12 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from departments.models import TimeSpans, DaysOfWeek
-from base.models import FourFieldModel
+from base.models import FourFieldModel, CodeGenerator
 
 
-class Person(FourFieldModel):
+class Person(FourFieldModel, CodeGenerator):
     first_name = models.CharField(max_length=250)
     last_name = models.CharField(max_length=250)
-    code = models.CharField(max_length=50, blank=True)
     description = models.TextField(blank=True)
 
     def __str__(self):
@@ -32,7 +31,9 @@ class Student(Person):
 
 
 class Instructor(Person):
-    pass
+
+    def _get_code_prefix(self):
+        return 'T'
 
 
 class InstructorExpertise(models.Model):

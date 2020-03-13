@@ -1,4 +1,5 @@
 import uuid
+import shortuuid
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -42,7 +43,7 @@ class HistoryModel(models.Model):
 
 
 class Base(models.Model):
-    unique_id = models.UUIDField(editable=False, unique=True)
+    unique_id = models.CharField(max_length=50, editable=False, unique=True)
 
     integration_code = models.CharField(
         _('integration code'),
@@ -60,9 +61,9 @@ class Base(models.Model):
         self.integration_code = hash(values)
 
     def save(self, *args, **kwargs):
-        print('SAVE METHOD')
         if self._state.adding:
-            self.unique_id = uuid.uuid4()
+            unique_id = uuid.uuid4()
+            self.unique_id = shortuuid.encode(unique_id)
             # self.integration_code = hash(self.unique_id)
         # else:
         self._set_hash()
@@ -79,5 +80,30 @@ class ThreeFieldModel(Base, HistoryModel):
 
 
 class FourFieldModel(Base, HistoryModel, StatusModel):
+    class Meta:
+        abstract = True
+
+
+class CodeGenerator(models.Model):
+    code = models.CharField(max_length=50, blank=True, unique=True)
+
+    def _get_code_prefix(self):
+        return self.__class__.__name__.upper()[0]
+
+    def _get_code_length(self):
+        return 5
+
+    def _generate_code(self):
+        prefix = self._get_code_prefix()
+
+        from .utils import generate_code
+        return generate_code(self.__class__, prefix, self._get_code_length())
+
+    def save(self, *args, **kwargs):
+        from .utils import generate_code
+        if self._state.adding:
+            self.code = self._generate_code()
+        super(CodeGenerator, self).save(*args, **kwargs)
+
     class Meta:
         abstract = True
