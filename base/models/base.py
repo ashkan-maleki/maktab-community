@@ -110,38 +110,34 @@ class CodeGenerator(models.Model):
 
 
 class Slugify(models.Model):
-    slug = models.SlugField(
+    slug = models.CharField(
         _('slug'), max_length=255,
         help_text=_("Used to build the category's URL."),
-        blank=True, unique=True)
+        blank=True)
 
-    _auto_slug = False
-
-    def _active_auto_slug(self):
-        self._auto_slug = True
-
-    def _slugify(self):
-        from django.utils.text import slugify
+    def slugify(self):
         text = ''
         if hasattr(self, 'title'):
             text = self.title
         elif hasattr(self, 'name'):
             text = self.name
 
-        if self._auto_slug:
-            if len(text) == 0:
-                raise ValueError('You should specify value for slug')
-            return slugify(self.title, allow_unicode=True)
+        return text
 
-        return ''
+    def _slugify(self):
+        from django.utils.text import slugify
+        text = self.slugify()
+        if len(text) == 0:
+            self.slug = ''
+        else:
+            self.slug = slugify(text, allow_unicode=True)
 
     def save(self, *args, **kwargs):
         """
         Overrides the save method to update the
         the last_update field.
         """
-        from django.utils.text import slugify
-        self.slug = self._slugify()
+        self._slugify()
         super(Slugify, self).save(*args, **kwargs)
 
     class Meta:

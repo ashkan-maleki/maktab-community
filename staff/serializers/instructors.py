@@ -7,7 +7,7 @@ class InstructorSerializer(serializers.ModelSerializer):
     class Meta:
         url_name = 'api:instructor'
         model = models.Instructor
-        have_four_base_fields = True
+        have_base_fields = True
         fields = [
             'first_name', 'last_name', 'code', 'description'
         ]
