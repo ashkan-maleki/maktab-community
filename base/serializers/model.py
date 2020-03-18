@@ -29,15 +29,15 @@ class ModelSerializer(serializers.ModelSerializer):
         # if hasattr(self.Meta, 'have_four_base_fields'):
         #     self._base_fields += utils.get_four_base_fields()
         model = self.Meta.model
-        for fields in self._base_fields:
-            if hasattr(model, fields):
-                if fields not in self.Meta.fields:
-                    self.Meta.fields.append(fields)
+        for field in self._base_fields:
+            if hasattr(model, field):
+                if field not in self.Meta.fields:
+                    self.Meta.fields.append(field)
                 try:
-                    if fields not in self.Meta.read_only_fields:
-                        self.Meta.read_only_fields.append(fields)
+                    if field not in self.Meta.read_only_fields:
+                        self.Meta.read_only_fields.append(field)
                 except AttributeError:
-                    self.Meta.read_only_fields = [fields, ]
+                    self.Meta.read_only_fields = [field, ]
 
         # print(self.Meta.read_only_fields)
         # print(self.Meta.fields)

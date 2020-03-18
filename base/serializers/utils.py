@@ -28,6 +28,7 @@ def get_base_fields():
         'unique_id',
         'status',
         'history',
+        'version',
         'integration_code',
         'code',
         'slug',

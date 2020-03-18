@@ -9,7 +9,7 @@ class InstructorSerializer(serializers.ModelSerializer):
         model = models.Instructor
         have_base_fields = True
         fields = [
-            'first_name', 'last_name', 'code', 'description'
+            'first_name', 'last_name', 'description'
         ]
         # + utils.get_base_fields()
 

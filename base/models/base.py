@@ -1,5 +1,6 @@
 import uuid
 import shortuuid
+import json
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -34,9 +35,61 @@ class HistoryModel(models.Model):
     history = models.TextField(
         _('history'), blank=True, null=True)
 
-    # def save(self, *args, **kwargs):
-    #     self.integration_code = hash(self)
-    #     super(Base, self).save(*args, **kwargs)
+    version = models.IntegerField(
+        _('current version'), blank=True, default=1)
+
+    @property
+    def json_histroy(self):
+        return json.loads(self.history)
+
+    def _create_history(self):
+        dumping_dic = {
+            "1": {
+                "time": str(timezone.now().time()),
+                "date": str(timezone.now().date())
+                # 'user_id': user.id,
+                # 'username': user.username,
+            }
+        }
+
+        return json.dumps(dumping_dic, sort_keys=True, indent=4)
+
+    def _update_history(self):
+        history_dic = self.json_histroy
+        dumping_dic = {
+            str(self.version): {
+                "time": str(timezone.now().time()),
+                "date": str(timezone.now().date())
+                # 'user_id': user.id,
+                # 'username': user.username,
+            }
+        }
+        history_dic.update({
+            str(self.version): {
+                "time": str(timezone.now().time()),
+                "date": str(timezone.now().date())
+                # 'user_id': user.id,
+                # 'username': user.username,
+            }
+        })
+
+        return json.dumps(history_dic, sort_keys=True, indent=4)
+
+    def log_history(self):
+        # self.history = self._create_history()
+
+        if len(self.history) == 0:
+            self.history = self._create_history()
+        else:
+            self.history = self._update_history()
+
+    def save(self, *args, **kwargs):
+
+        if not self._state.adding:
+            # self.version = 1
+            self.version += 1
+        self.log_history()
+        super(HistoryModel, self).save(*args, **kwargs)
 
     class Meta:
         abstract = True
