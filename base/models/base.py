@@ -36,64 +36,73 @@ class HistoryModel(models.Model):
         _('history'), blank=True, null=True)
 
     version = models.IntegerField(
-        _('current version'), blank=True, default=1)
+        _('current version'), blank=True, default=0)
 
     @property
-    def json_histroy(self):
+    def json_history(self):
         return json.loads(self.history)
 
     _exclude_fields_from_history = [
         '_state',
         'id',
         'history',
+        'integration_code',
+        'version',
     ]
 
-    def create_history_model(self, user):
-        base_meta_info = {
-            "time": str(timezone.now().time()),
-            "date": str(timezone.now().date()),
-            "user_id": str(user.id),
-            "username": str(user.username)
-        }
+    _authenticated_user = None
+
+    @property
+    def authenticated_user(self):
+        if self._authenticated_user is None:
+            return User.objects.all().first()
+        return self._authenticated_user
+
+    @property
+    def vital_model_fields(self):
         obj_meta_info = self.__dict__.copy()
         for field in self._exclude_fields_from_history:
             del obj_meta_info[field]
-        print('========')
-        print(obj_meta_info)
-        # base_meta_info.update(self.__dict__)
+
+        return obj_meta_info
+
+    @property
+    def meta_fields(self):
         return {
-            str(self.version): base_meta_info
+            "time": str(timezone.now().time()),
+            "date": str(timezone.now().date()),
+            "user_id": str(self.authenticated_user.id),
+            "username": str(self.authenticated_user.username)
         }
 
-    def _create_history(self, user):
-        dumping_dic = self.create_history_model(
-            user,
-        )
+    @property
+    def log_model(self):
+        log = self.meta_fields.copy()
+        log.update(self.vital_model_fields.copy())
+        return log
 
-        return json.dumps(dumping_dic, sort_keys=True, indent=4)
+    @property
+    def history_record(self):
+        return {
+            str(self.version): self.log_model
+        }
 
-    def _update_history(self, user):
-        history_dic = self.json_histroy
-        history_dic.update(self.create_history_model(
-            user,
-        ))
+    @authenticated_user.setter
+    def authenticated_user(self, value):
+        self._authenticated_user = value
 
-        return json.dumps(history_dic, sort_keys=True, indent=4)
+    def write_history(self):
+        dumping_dic = self.history_record.copy()
+        if self.history is not None:
+            dumping_dic.update(self.json_history)
 
-    def log_history(self, user=None):
-        # self.history = self._create_history()
-        if user is None:
-            user = User.objects.all().first()
-        if self.history is None or len(self.history) == 0:
-            self.history = self._create_history(user)
-        else:
-            self.history = self._update_history(user)
+        self.history = json.dumps(dumping_dic, sort_keys=True, indent=4)
 
     def save(self, *args, **kwargs):
+        print(self.version)
 
-        if not self._state.adding:
-            self.version += 1
-        self.log_history()
+        self.version += 1
+        self.write_history()
         super(HistoryModel, self).save(*args, **kwargs)
 
     class Meta:
