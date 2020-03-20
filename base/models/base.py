@@ -109,34 +109,44 @@ class HistoryModel(models.Model):
         abstract = True
 
 
-class Base(models.Model):
+class UniqueModel(models.Model):
     unique_id = models.CharField(max_length=50, editable=False, unique=True)
 
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            self.unique_id = shortuuid.encode(uuid.uuid4())
+
+        super(UniqueModel, self).save(*args, **kwargs)
+
+    class Meta:
+        abstract = True
+
+
+class IntegrationModel(models.Model):
     integration_code = models.CharField(
         _('integration code'),
         max_length=255,
         blank=True
     )
 
-    def _set_hash(self):
-        all_fields = self._meta.get_fields()
+    @property
+    def current_object_hash(self):
         values = ''
-        for field in all_fields:
+        for field in self._meta.get_fields():
             if field.name != 'integration_code':
                 values += str(self.__dict__.get(field.name, ''))
 
-        self.integration_code = hash(values)
+        return hash(values)
 
     def save(self, *args, **kwargs):
-        if self._state.adding:
-            unique_id = uuid.uuid4()
-            self.unique_id = shortuuid.encode(unique_id)
-            # self.integration_code = hash(self.unique_id)
-        # else:
-        self._set_hash()
-        # self.integration_code = hash(self)
-        super(Base, self).save(*args, **kwargs)
+        self.integration_code = self.current_object_hash
+        super(IntegrationModel, self).save(*args, **kwargs)
 
+    class Meta:
+        abstract = True
+
+
+class Base(UniqueModel, HistoryModel, IntegrationModel):
     class Meta:
         abstract = True
 
