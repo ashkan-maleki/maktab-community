@@ -5,7 +5,7 @@ from departments.models import TimeSpans, DaysOfWeek
 from base.models import FourFieldModel, CodeGenerator, Slugify
 
 
-class Person(FourFieldModel, CodeGenerator, Slugify):
+class Person(CodeGenerator, Slugify, FourFieldModel):
     first_name = models.CharField(max_length=250)
     last_name = models.CharField(max_length=250)
     description = models.TextField(blank=True)
