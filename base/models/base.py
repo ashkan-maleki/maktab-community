@@ -48,6 +48,7 @@ class HistoryModel(models.Model):
         'history',
         'integration_code',
         'version',
+        'image',
     ]
 
     _authenticated_user = None
@@ -147,16 +148,6 @@ class IntegrationModel(models.Model):
 
 
 class Base(UniqueModel, HistoryModel, IntegrationModel):
-    class Meta:
-        abstract = True
-
-
-class ThreeFieldModel(Base, HistoryModel):
-    class Meta:
-        abstract = True
-
-
-class FourFieldModel(Base, HistoryModel, StatusModel):
     class Meta:
         abstract = True
 

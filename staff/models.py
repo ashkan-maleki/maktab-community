@@ -2,10 +2,11 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from departments.models import TimeSpans, DaysOfWeek
-from base.models import FourFieldModel, CodeGenerator, Slugify
+from base.models import Base, CodeGenerator, Slugify
+from box.models.common import ImageModel
 
 
-class Person(CodeGenerator, Slugify, FourFieldModel):
+class Person(CodeGenerator, Slugify, Base, ImageModel):
     first_name = models.CharField(max_length=250)
     last_name = models.CharField(max_length=250)
     description = models.TextField(blank=True)

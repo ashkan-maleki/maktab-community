@@ -1,2 +1,1 @@
-from .base import Base, ThreeFieldModel, FourFieldModel,\
-    CodeGenerator, Slugify
+from .base import Base, CodeGenerator, Slugify
